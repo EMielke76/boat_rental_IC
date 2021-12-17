@@ -1,186 +1,270 @@
-# World Cup
+# Boat Rental
 
-## Instructions
+## Setup
 
 * Fork this Repository
-* Clone your forked repo to your computer.
-* Complete the activity below.
-* Push your solution to your forked repo
-* Submit a pull request from your repository to this repository
-  * Put your name in your PR!
+* Clone YOUR fork
+* Compete the activity below
+* Push your solution to your fork
+* Submit a pull request from your repository to the turingschool-examples repository
+  * Make sure to put your name in your PR!
+
+# Activity
 
 ## Iteration 1
 
-Use TDD to create a `Player` class that responds to the following interaction pattern:
+Use TDD to create a `Boat` and a `Renter` class that respond to the following interaction pattern:
 
 ```ruby
-pry(main)> require './lib/player'
+pry(main)> require './lib/boat'
 # => true
 
-pry(main)> player = Player.new({name: "Luka Modric", position: "midfielder"})    
-# => #<Player:0x00007fd8273d21e0...>
+pry(main)> require './lib/renter'
+# => true
 
-pry(main)> player.name
-# => "Luka Modric"
+pry(main)> kayak = Boat.new(:kayak, 20)    
+# => #<Boat:0x00007fceac8f0480...>
 
-pry(main)> player.position
-# => "midfielder"
+pry(main)> kayak.type
+# => :kayak
+
+pry(main)> kayak.price_per_hour
+# => 20
+
+pry(main)> kayak.hours_rented
+# => 0
+
+pry(main)> kayak.add_hour
+
+pry(main)> kayak.add_hour
+
+pry(main)> kayak.add_hour
+
+pry(main)> kayak.hours_rented
+# => 3
+
+pry(main)> renter = Renter.new("Patrick Star", "4242424242424242")    
+# => #<Renter:0x00007fb5ef98b118...>
+
+pry(main)> renter.name
+# => "Patrick Star"
+
+pry(main)> renter.credit_card_number
+# => "4242424242424242"
 ```
 
 ## Iteration 2
 
+Use TDD to create a `Dock` class. It should have the following methods:
 
+* `rent` - this method takes a `Boat` and a `Renter` as arguments. Calling this method signifies that the `Boat` has been rented by the `Renter`.
+* `rental_log` - this method returns a hash that associates a `Boat` with the `Renter` that rented it.
 
 ```ruby
-pry(main)> require './lib/team'
+pry(main)> require './lib/dock'
 # => true
 
-pry(main)> require './lib/player'
+pry(main)> require './lib/renter'
 # => true
 
-pry(main)> team = Team.new("France")    
-# => #<Team:0x00007fe0d0335d48...>
-
-pry(main)> team.country
-# => "France"
-
-pry(main)> team.eliminated?
-# => false
-
-pry(main)> team.eliminated = true
-
-pry(main)> team.eliminated?
+pry(main)> require './lib/boat'
 # => true
 
-pry(main)> team.players
-# => []
+pry(main)> dock = Dock.new("The Rowing Dock", 3)    
+# => #<Dock:0x00007fdeedb0a788...>
 
-pry(main)> mbappe = Player.new({name: "Kylian Mbappe", position: "forward"})
-# => #<Player:0x00007fe0d02bd280...>
+pry(main)> dock.name
+# => "The Rowing Dock"
 
-pry(main)> pogba = Player.new({name: "Paul Pogba", position: "midfielder"})    
-# => #<Player:0x00007fe0d0851138...>
+pry(main)> dock.max_rental_time
+# => 3
 
-pry(main)> team.add_player(mbappe)
+pry(main)> kayak_1 = Boat.new(:kayak, 20)
+# => #<Boat:0x00007fdeedb3a528...>
 
-pry(main)> team.add_player(pogba)    
+pry(main)> kayak_2 = Boat.new(:kayak, 20)    
+# => #<Boat:0x00007fdeedae1860...>
 
-pry(main)> team.players
-# => [#<Player:0x00007fe0d02bd280...>, #<Player:0x00007fe0d0851138...>]
+pry(main)> sup_1 = Boat.new(:standup_paddle_board, 15)
+# => #<Boat:0x00007fdeedaa8bc8...>
 
-pry(main)> team.players_by_position("midfielder")
-# => [#<Player:0x00007fe0d0851138...>]
+pry(main)> patrick = Renter.new("Patrick Star", "4242424242424242")    
+# => #<Renter:0x00007fdeed0ab828...>
 
-pry(main)> team.players_by_position("defender")
-# => []
+pry(main)> eugene = Renter.new("Eugene Crabs", "1313131313131313")    
+# => #<Renter:0x00007fdeed8ce5c8...>
+
+pry(main)> dock.rent(kayak_1, patrick)    
+
+pry(main)> dock.rent(kayak_2, patrick)    
+
+pry(main)> dock.rent(sup_1, eugene)    
+
+pry(main)> dock.rental_log
+# =>
+# {
+#   #<Boat:0x00007fdeedb3a528...> => #<Renter:0x00007fdeed0ab828...>,
+#   #<Boat:0x00007fdeedae1860...> => #<Renter:0x00007fdeed0ab828...>,
+#   #<Boat:0x00007fdeedaa8bc8...> => #<Renter:0x00007fdeed8ce5c8...>
+# }
 ```
 
 ## Iteration 3
 
-Use TDD to create a `WorldCup` class that responds to the following interaction pattern. For the `active_players_by_position` method, an active player is a player that is on a team that is not eliminated.
+Use TDD to implement a `Dock#charge` method:
+
+* This method takes a `Boat` as an argument
+* This method returns a hash with two key/value pairs:
+  * The key `:card_number` points to the credit card number of the `Renter` that rented the boat
+  * The key `:amount` points to the amount that should be charged. The amount is calculated by multiplying the Boat's price_per_hour by the number of hours it was rented. However, any hours past the Dock's max_rental_time should not be counted. So if a Boat is rented for 4 hours, and the max_rental_time is 3, the charge should only be for 3 hours.
+
+The `Dock` class should respond to the following interaction pattern:
 
 ```ruby
-pry(main)> require './lib/world_cup'
+pry(main)> require './lib/dock'
 # => true
 
-pry(main)> require './lib/team'
+pry(main)> require './lib/renter'
 # => true
 
-pry(main)> require './lib/player'
+pry(main)> require './lib/boat'
 # => true
 
-pry(main)> france = Team.new("France")
-# => #<Team:0x00007f936a313698...>
+pry(main)> dock = Dock.new("The Rowing Dock", 3)    
+# => #<Dock:0x00007fe2f71f4730...>
 
-pry(main)> mbappe = Player.new({name: "Kylian Mbappe", position: "forward"})    
-# => #<Player:0x00007f936a9168b0...>
+pry(main)> kayak_1 = Boat.new(:kayak, 20)
+# => #<Boat:0x00007fe2f8074c38...>
 
-pry(main)> pogba = Player.new({name: "Paul Pogba", position: "midfielder"})    
-# => #<Player:0x00007f936c035eb0...>
+pry(main)> kayak_2 = Boat.new(:kayak, 20)    
+# => #<Boat:0x00007fe2f70e3e68...>
 
-pry(main)> france.add_player(mbappe)    
+pry(main)> sup_1 = Boat.new(:standup_paddle_board, 15)    
+# => #<Boat:0x00007fe2f80a6ee0...>
 
-pry(main)> france.add_player(pogba)    
+pry(main)> patrick = Renter.new("Patrick Star", "4242424242424242")    
+# => #<Renter:0x00007fe2f787d700...>
 
-pry(main)> croatia = Team.new("Croatia")    
-# => #<Team:0x00007f936a3afea8...>
+pry(main)> eugene = Renter.new("Eugene Crabs", "1313131313131313")    
+# => #<Renter:0x00007fe2f7829c68...>
 
-pry(main)> modric = Player.new({name: "Luka Modric", position: "midfielder"})    
-# => #<Player:0x00007f936a3595f8...>
+pry(main)> dock.rent(kayak_1, patrick)
 
-pry(main)> vida = Player.new({name: "Domagoj Vida", position: "defender"})    
-# => #<Player:0x00007f936a318f08...>
+pry(main)> dock.rent(kayak_2, patrick)    
 
-pry(main)> croatia.add_player(modric)    
+pry(main)> dock.rent(sup_1, eugene)    
 
-pry(main)> croatia.add_player(vida)    
+pry(main)> kayak_1.add_hour
 
-pry(main)> world_cup = WorldCup.new(2018, [france, croatia])    
-# => #<WorldCup:0x00007f936a010d10...>
+pry(main)> kayak_1.add_hour
 
-pry(main)> world_cup.year
-# => 2018
+pry(main)> dock.charge(kayak_1)
+# =>
+# {
+#   :card_number => "4242424242424242",
+#   :amount => 40
+# }
 
-pry(main)> world_cup.teams
-# => [#<Team:0x00007f936a313698...>, #<Team:0x00007f936a3afea8...>]
+pry(main)> sup_1.add_hour
 
-pry(main)> world_cup.active_players_by_position("midfielder")
-# => [#<Player:0x00007f936c035eb0...>, #<Player:0x00007f936a3595f8...>]
+pry(main)> sup_1.add_hour
 
-pry(main)> croatia.eliminated = true    
+pry(main)> sup_1.add_hour
 
-pry(main)> world_cup.active_players_by_position("midfielder")
-# => [#<Player:0x00007f936c035eb0...>]
+# Any hours past the max rental time should not count
+pry(main)> sup_1.add_hour
+
+pry(main)> sup_1.add_hour
+
+pry(main)> dock.charge(sup_1)
+# =>
+# {
+#   :card_number => "1313131313131313",
+#   :amount => 45
+# }
 ```
 
 ## Iteration 4
 
-Use TDD to update your WorldCup class so that it responds to the following interaction pattern:
+Use TDD to update your `Dock` class with the following methods:
+
+* `return` - This method takes a `Boat` object as an argument. When this method is called, it signifies that a boat has been returned and is no longer being rented.
+* `log_hour` - This method takes no arguments. When it is called, all boats that are currently rented have been rented an additional hour.
+* `revenue` - This method takes no arguments. It returns the total revenue generated by charging all boats that have been rented and returned. A charge for a boat follows the same rules as iteration 3.
+
+The `Dock` class should now respond to the following interaction pattern:
 
 ```ruby
-pry(main)> require './lib/world_cup'
-# => true
+pry(main)> require './lib/renter'
 
-pry(main)> require './lib/team'
-# => true
+pry(main)> require './lib/boat'
 
-pry(main)> require './lib/player'
-# => true
+pry(main)> require './lib/dock'
 
-pry(main)> france = Team.new("France")
-# => #<Team:0x00007f936a313698...>
+pry(main)> dock = Dock.new("The Rowing Dock", 3)
 
-pry(main)> mbappe = Player.new({name: "Kylian Mbappe", position: "forward"})    
-# => #<Player:0x00007f936a9168b0...>
+pry(main)> kayak_1 = Boat.new(:kayak, 20)
 
-pry(main)> pogba = Player.new({name: "Paul Pogba", position: "midfielder"})    
-# => #<Player:0x00007f936c035eb0...>
+pry(main)> kayak_2 = Boat.new(:kayak, 20)    
 
-pry(main)> france.add_player(mbappe)    
+pry(main)> canoe = Boat.new(:canoe, 25)    
 
-pry(main)> france.add_player(pogba)    
+pry(main)> sup_1 = Boat.new(:standup_paddle_board, 15)    
 
-pry(main)> croatia = Team.new("Croatia")    
-# => #<Team:0x00007f936a3afea8...>
+pry(main)> sup_2 = Boat.new(:standup_paddle_board, 15)    
 
-pry(main)> modric = Player.new({name: "Luka Modric", position: "midfielder"})    
-# => #<Player:0x00007f936a3595f8...>
+pry(main)> patrick = Renter.new("Patrick Star", "4242424242424242")
 
-pry(main)> vida = Player.new({name: "Domagoj Vida", position: "defender"})    
-# => #<Player:0x00007f936a318f08...>
+pry(main)> eugene = Renter.new("Eugene Crabs", "1313131313131313")    
 
-pry(main)> croatia.add_player(modric)    
+# Rent Boats out to first Renter
+pry(main)> dock.rent(kayak_1, patrick)
 
-pry(main)> croatia.add_player(vida)    
+pry(main)> dock.rent(kayak_2, patrick)
 
-pry(main)> world_cup = WorldCup.new(2018, [france, croatia])    
-# => #<WorldCup:0x00007f936a010d10...>
+# kayak_1 and kayak_2 are rented an additional hour
+pry(main)> dock.log_hour
 
-world_cup.all_players_by_position
-# =>
-#   {
-#     "forward" => [#<Player:0x00007f936a9168b0...>],
-#     "midfielder" => [#<Player:0x00007f936c035eb0...>, #<Player:0x00007f936a3595f8...>],
-#     "defender" => [#<Player:0x00007f936a318f08...>]
-#   }
+pry(main)> dock.rent(canoe, patrick)
+
+# kayak_1, kayak_2, and canoe are rented an additional hour
+pry(main)> dock.log_hour
+
+# Revenue should not be generated until boats are returned
+pry(main)> dock.revenue
+# => 0
+
+pry(main)> dock.return(kayak_1)
+
+pry(main)> dock.return(kayak_2)
+
+pry(main)> dock.return(canoe)
+
+# Revenue thus far
+pry(main)> dock.revenue
+# => 105
+
+# Rent Boats out to a second Renter
+pry(main)> dock.rent(sup_1, eugene)
+
+pry(main)> dock.rent(sup_2, eugene)
+
+pry(main)> dock.log_hour
+
+pry(main)> dock.log_hour
+
+pry(main)> dock.log_hour
+
+# Any hours rented past the max rental time don't factor into revenue
+pry(main)> dock.log_hour
+
+pry(main)> dock.log_hour
+
+pry(main)> dock.return(sup_1)
+
+pry(main)> dock.return(sup_2)
+
+# Total revenue
+pry(main)> dock.revenue
+# => 195
 ```
