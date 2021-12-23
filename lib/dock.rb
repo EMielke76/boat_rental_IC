@@ -13,4 +13,11 @@ class Dock
   def rent(boat, renter)
     @rental_log[boat] = renter
   end
+
+  def charge(boat)
+    charged = Hash.new(0)
+    charged[:card_number] = @rental_log[boat].credit_card_number #patrick star is value now we can call attributes
+    charged[:amount] = boat.price_per_hour * boat.hours_rented 
+    charged
+  end
 end
