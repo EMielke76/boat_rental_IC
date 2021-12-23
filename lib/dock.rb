@@ -15,9 +15,13 @@ class Dock
   end
 
   def charge(boat)
+    max = (boat.price_per_hour * @max_rental_time)
     charged = Hash.new(0)
     charged[:card_number] = @rental_log[boat].credit_card_number #patrick star is value now we can call attributes
-    charged[:amount] = boat.price_per_hour * boat.hours_rented 
+    charged[:amount] = boat.price_per_hour * boat.hours_rented
+                      if charged[:amount] >= max
+                        charged[:amount] = max
+                      end
     charged
   end
 end
